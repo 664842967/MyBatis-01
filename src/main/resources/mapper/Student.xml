@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--该文件是用于进行数据库表中某个表的操作声明
+相当于dao层中的实现类,例如以前写的StudentDaoImpl
+里面定义一系列操作数据库表的sql语句
+namespace:声明该操作文件对外提供的接口类路径是谁
+          相当于StudentDao接口
+-->
+<!--
+select:查询标签,执行查询语句,常用属性
+       id:唯一标识该操作的名称,对应接口(StudentDao)中的某个方法名
+       parameterType(parameterMap):定义sql语句中需要的参数,即条件查询中的参数
+          对应接口中方法的参数列表,注意:接口中的参数只能一个,对于多
+          个参数可以封装到一个pojo类中
+       resultType(resultMap):返回结果声明,对应一个map,以key,value的形式存储
+          返回的数据
+-->
+<mapper namespace="com.ssm.mapper.StudentMapper">
+    <select id="selectAll" resultType="com.ssm.domain.Student">
+        SELECT * FROM Student
+    </select>
+    <!--分页查询
+    在mapper文件中用#{属性名}的方式取传递过来的参数值,如果传递过来的参数是一个基本类型则可以用#{value}获取:
+    如果是pojo,则通过#{属性名}获取某个值-->
+    <select id="pageSelect" resultType="com.ssm.domain.Student" parameterType="com.ssm.page.PageBean">
+        SELECT * FROM student
+        WHERE sname LIKE '%${parameter.sname}%'
+        limit #{startIndex},#{pageSize}
+    </select>
+
+    <!--获取学生表总条数-->
+    <select id="getTotalRecord" parameterType="com.ssm.page.PageBean" resultType="java.lang.Integer">
+              SELECT count(sid) FROM Student
+              WHERE sname LIKE '%${parameter.sname}%'
+    </select>
+</mapper>
